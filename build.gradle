@@ -74,8 +74,8 @@ task(replayWatch, type: JavaExec) {
 // Also defines JUnit 4.
 dependencies {
 
-  def akitVersion = "26.0.2"
-    annotationPro essor "org.littletonrobotics.akit:akit-autolog:${akitVersion}"
+    // def akitVersion = "26.0.2"
+    // annotationPro essor "org.littletonrobotics.akit:akit-autolog:${akitVersion}"
 
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
