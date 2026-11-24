@@ -1,0 +1,77 @@
+package frc.robot.subsystems.elevator;
+
+import org.littletonrobotics.junction.AutoLog;
+
+public interface ElevatorIO {
+
+  @AutoLog
+  public static class ElevatorIOInputs {
+
+    public enum ElevatorState {
+      Default(0.55),
+      CoralL1(0.8),
+      CoralL2(1.7),
+      DealgifyL2(1.5),
+      CoralL3(3.95),
+      DealgifyL3(2.5),
+      CoralL4(7.75);
+
+      // Field to store the encoder position
+      private final double encoderPosition;
+
+      // Constructor to assign the encoder position
+      ElevatorState(double encoderPosition) {
+        this.encoderPosition = encoderPosition;
+      }
+
+      // Getter for encoder position
+      public double getEncoderPosition() {
+        return encoderPosition;
+      }
+    }
+
+    // Fields representing the elevator state and inputs
+    public ElevatorState elevatorState = ElevatorState.Default;
+    public double elevatorAppliedVolts = 0.0;
+    public double elevatorCurrentAmps = 0.0;
+    public boolean elevatorEncoderConnected = false;
+    public double elevatorPosition = 0.0;
+    public double setpoint = 0.0;
+    public boolean elevatorAtSetpoint = false;
+    public boolean zeroSwitchTriggered = false;
+    public double elevatorMotorPosition = 0.0;
+    public boolean toggle = false;
+
+    // Utility method to get the desired encoder position for the current state
+    public double getDesiredEncoderPosition() {
+      return elevatorState.getEncoderPosition();
+    }
+  }
+
+  /** Updates the set of loggable inputs. */
+  public default void updateInputs(ElevatorIOInputs inputs) {}
+
+  /** Sets the elevator position based on the desired state. */
+  public default void setElevatorPosition(double value) {}
+
+  /** Run slam elevator at amps. */
+  default void runCurrent(double amps) {}
+
+  /** Stop slam elevator. */
+  default void stop() {}
+
+  /** Enable or disable brake mode on the elevator motor. */
+  default void setBrakeMode() {}
+
+  /** Set the Elevator to Coast. */
+  default void setCoastMode() {}
+
+  /** Get if the Limit Switch is triggered. */
+  default void getZeroSwitch(ElevatorIOInputs inputs) {}
+
+  /** Zero the Elevator Encoder. */
+  default void zeroElevator() {}
+
+  /** Switch the Toggle State of the Elevator. */
+  default void switchToggle() {}
+}

@@ -15,7 +15,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.MotorIDConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -24,6 +26,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -38,9 +43,16 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final EndEffector endEffector;
+  private final Elevator elevator;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+
+  // Triggers
+  private final Trigger elevatorToggle;
+
+  // Elevator state
+  private ElevatorState selectedElevatorState = ElevatorState.Default;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -63,6 +75,15 @@ public class RobotContainer {
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(1)); // Motor id needs to be fixed, just a placeholder rn.
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    MotorIDConstants.ELEVATOR_MOTOR_ID1,
+                    MotorIDConstants.ELEVATOR_MOTOR_ID2,
+                    MotorIDConstants.ELEVATOR_ENCODER_ID,
+                    4));
+
+        elevatorToggle = new Trigger(() -> elevator.getToggle());
 
         break;
 
@@ -79,6 +100,15 @@ public class RobotContainer {
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(1)); // Motor id needs to be fixed, just a placeholder rn.
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    MotorIDConstants.ELEVATOR_MOTOR_ID1,
+                    MotorIDConstants.ELEVATOR_MOTOR_ID2,
+                    MotorIDConstants.ELEVATOR_ENCODER_ID,
+                    4));
+
+        elevatorToggle = new Trigger(() -> elevator.getToggle());
 
         break;
 
@@ -95,6 +125,14 @@ public class RobotContainer {
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(1)); // Motor id needs to be fixed, just a placeholder rn.
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    MotorIDConstants.ELEVATOR_MOTOR_ID1,
+                    MotorIDConstants.ELEVATOR_MOTOR_ID2,
+                    MotorIDConstants.ELEVATOR_ENCODER_ID,
+                    4));
+        elevatorToggle = new Trigger(() -> elevator.getToggle());
 
         break;
     }
@@ -162,6 +200,11 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.rightBumper().whileTrue(endEffector.runEffector(4));
+
+    controller.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
+    controller.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
+    controller.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
+    controller.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
   }
 
   /**
